@@ -1,419 +1,78 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Generador Pro</title>
-    <style>
-        :root {
-            --bg-color: #0f172a;
-            --card-bg: #1e293b;
-            --primary: #3b82f6;
-            --primary-hover: #2563eb;
-            --text-main: #f8fafc;
-            --text-muted: #94a3b8;
-            --input-bg: #0f172a;
-            --success: #10b981;
-        }
-
-        body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-main);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            margin: 0;
-            background-image: radial-gradient(circle at top right, #1e293b 0%, #0f172a 100%);
-        }
-
-        .container {
-            background-color: var(--card-bg);
-            padding: 32px;
-            border-radius: 20px;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255,255,255,0.05);
-            width: 100%;
-            max-width: 380px;
-        }
-
-        h2 {
-            text-align: center;
-            margin: 0 0 24px 0;
-            font-size: 1.5rem;
-            font-weight: 600;
-            letter-spacing: -0.5px;
-        }
-
-        /* Caja de resultado */
-        .result-box {
-            position: relative;
-            margin-bottom: 24px;
-        }
-
-        #result {
-            width: 100%;
-            box-sizing: border-box;
-            padding: 16px 85px 16px 16px;
-            background-color: var(--input-bg);
-            border: 1px solid #334155;
-            border-radius: 12px;
-            color: var(--success);
-            font-family: 'Courier New', Courier, monospace;
-            font-size: 1.2rem;
-            font-weight: bold;
-            outline: none;
-            transition: border-color 0.3s;
-        }
-
-        #result:focus {
-            border-color: var(--primary);
-        }
-
-        #copy-btn {
-            position: absolute;
-            right: 6px;
-            top: 6px;
-            bottom: 6px;
-            padding: 0 16px;
-            border: none;
-            background-color: var(--primary);
-            color: white;
-            cursor: pointer;
-            border-radius: 8px;
-            font-weight: 600;
-            font-size: 0.9rem;
-            transition: all 0.2s;
-        }
-
-        #copy-btn:hover {
-            background-color: var(--primary-hover);
-            transform: translateY(-1px);
-        }
-
-        /* Ajustes y controles */
-        .setting {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin: 16px 0;
-            padding-bottom: 12px;
-            border-bottom: 1px solid #334155;
-        }
-
-        .setting:last-of-type {
-            border-bottom: none;
-        }
-
-        .setting label {
-            font-size: 0.95rem;
-            color: var(--text-main);
-        }
-
-        /* Slider de longitud */
-        .length-control {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        #length-val {
-            background: var(--input-bg);
-            padding: 4px 12px;
-            border-radius: 6px;
-            font-weight: bold;
-            font-size: 0.9rem;
-            border: 1px solid #334155;
-            min-width: 20px;
-            text-align: center;
-        }
-
-        input[type="range"] {
-            accent-color: var(--primary);
-            cursor: pointer;
-        }
-
-        /* Switches estilo iOS */
-        .switch {
-            position: relative;
-            display: inline-block;
-            width: 44px;
-            height: 24px;
-        }
-
-        .switch input {
-            opacity: 0;
-            width: 0;
-            height: 0;
-        }
-
-        .slider {
-            position: absolute;
-            cursor: pointer;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background-color: #475569;
-            transition: .3s;
-            border-radius: 24px;
-        }
-
-        .slider:before {
-            position: absolute;
-            content: "";
-            height: 18px;
-            width: 18px;
-            left: 3px;
-            bottom: 3px;
-            background-color: white;
-            transition: .3s;
-            border-radius: 50%;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-        }
-
-        input:checked + .slider {
-            background-color: var(--primary);
-        }
-
-        input:checked + .slider:before {
-            transform: translateX(20px);
-        }
-
-        /* Palabra Base */
-        .word-group {
-            margin-top: 24px;
-            background: var(--input-bg);
-            padding: 16px;
-            border-radius: 12px;
-            border: 1px solid #334155;
-        }
-
-        .word-group label {
-            display: block;
-            margin-bottom: 8px;
-            font-size: 0.9rem;
-            font-weight: 500;
-        }
-
-        .word-group p {
-            margin: 6px 0 0 0;
-            font-size: 0.75rem;
-            color: var(--text-muted);
-            line-height: 1.4;
-        }
-
-        input[type="text"].full-width {
-            width: 100%;
-            box-sizing: border-box;
-            padding: 12px;
-            border-radius: 8px;
-            border: 1px solid #475569;
-            background-color: var(--card-bg);
-            color: white;
-            font-size: 1rem;
-            outline: none;
-            transition: border-color 0.3s;
-        }
-
-        input[type="text"].full-width:focus {
-            border-color: var(--primary);
-        }
-
-        /* Botón Generar */
-        .btn-generate {
-            width: 100%;
-            padding: 16px;
-            background: linear-gradient(135deg, var(--primary), #6366f1);
-            color: white;
-            border: none;
-            border-radius: 12px;
-            font-size: 1.1rem;
-            font-weight: 600;
-            cursor: pointer;
-            margin-top: 28px;
-            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4);
-            transition: all 0.3s ease;
-        }
-
-        .btn-generate:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(59, 130, 246, 0.6);
-        }
-        
-        .btn-generate:active {
-            transform: translateY(0);
-        }
-    </style>
+    <title>PassGen Pro | Seguridad Minimalista</title>
+    <link rel="stylesheet" href="style.css">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&family=JetBrains+Mono:wght@500&display=swap"
+        rel="stylesheet">
 </head>
+
 <body>
+    <main class="app-container">
+        <header>
+            <h1>PassGen <span>Pro</span></h1>
+            <p>Generación de claves con cifrado visual</p>
+        </header>
 
-<div class="container">
-    <h2>Generador Seguro</h2>
-    
-    <div class="result-box">
-        <input type="text" id="result" readonly placeholder="Contraseña..." autocomplete="off">
-        <button id="copy-btn" onclick="copyToClipboard()">Copiar</button>
-    </div>
+        <section class="display-section">
+            <div class="input-wrapper">
+                <input type="text" id="result" readonly placeholder="Contraseña generada">
+                <button id="copy-btn" title="Copiar contraseña">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                        <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                    </svg>
+                </button>
+            </div>
+            <div class="strength-meter" id="strength-meter"></div>
+        </section>
 
-    <div class="setting">
-        <label>Longitud</label>
-        <div class="length-control">
-            <input type="range" id="length" min="6" max="32" value="14" oninput="updateLengthVal()">
-            <span id="length-val">14</span>
-        </div>
-    </div>
-    
-    <div class="setting">
-        <label>Mayúsculas (A-Z)</label>
-        <label class="switch">
-            <input type="checkbox" id="uppercase" checked>
-            <span class="slider"></span>
-        </label>
-    </div>
-    <div class="setting">
-        <label>Minúsculas (a-z)</label>
-        <label class="switch">
-            <input type="checkbox" id="lowercase" checked>
-            <span class="slider"></span>
-        </label>
-    </div>
-    <div class="setting">
-        <label>Números (0-9)</label>
-        <label class="switch">
-            <input type="checkbox" id="numbers" checked>
-            <span class="slider"></span>
-        </label>
-    </div>
-    <div class="setting">
-        <label>Símbolos (!@#$)</label>
-        <label class="switch">
-            <input type="checkbox" id="symbols" checked>
-            <span class="slider"></span>
-        </label>
-    </div>
+        <section class="controls-section">
+            <div class="setting-group">
+                <div class="label-row">
+                    <label>Longitud</label>
+                    <span id="length-val">16</span>
+                </div>
+                <input type="range" id="length" min="8" max="50" value="16">
+            </div>
 
-    <div class="word-group">
-        <label for="baseword">Palabra base (Opcional)</label>
-        <input type="text" id="baseword" class="full-width" placeholder="Ej: cocodrilo">
-        <p>Camufla tu palabra transformando letras en símbolos y números visualmente similares.</p>
-    </div>
+            <div class="grid-options">
+                <label class="option-card">
+                    <input type="checkbox" id="uppercase" checked>
+                    <span class="custom-check"></span>
+                    <span class="label-text">ABC</span>
+                </label>
+                <label class="option-card">
+                    <input type="checkbox" id="lowercase" checked>
+                    <span class="custom-check"></span>
+                    <span class="label-text">abc</span>
+                </label>
+                <label class="option-card">
+                    <input type="checkbox" id="numbers" checked>
+                    <span class="custom-check"></span>
+                    <span class="label-text">123</span>
+                </label>
+                <label class="option-card">
+                    <input type="checkbox" id="symbols" checked>
+                    <span class="custom-check"></span>
+                    <span class="label-text">@#$%</span>
+                </label>
+            </div>
 
-    <button class="btn-generate" onclick="generatePassword()">Generar Contraseña</button>
-</div>
+            <div class="word-input-group">
+                <label for="baseword">Palabra Semilla (Opcional)</label>
+                <input type="text" id="baseword" placeholder="Ej: miLlaveSegura">
+            </div>
 
-<script>
-    function updateLengthVal() {
-        document.getElementById('length-val').innerText = document.getElementById('length').value;
-    }
-
-    const randomFunc = {
-        lower: getRandomLower,
-        upper: getRandomUpper,
-        number: getRandomNumber,
-        symbol: getRandomSymbol
-    };
-
-    function generatePassword() {
-        const length = +document.getElementById('length').value;
-        const hasUpper = document.getElementById('uppercase').checked;
-        const hasLower = document.getElementById('lowercase').checked;
-        const hasNumbers = document.getElementById('numbers').checked;
-        const hasSymbols = document.getElementById('symbols').checked;
-        const baseWord = document.getElementById('baseword').value.trim();
-
-        let generatedPassword = '';
-
-        if (baseWord) {
-            generatedPassword = transformToLeet(baseWord, hasUpper, hasNumbers, hasSymbols);
-            if (generatedPassword.length < length) {
-                const paddingLength = length - generatedPassword.length;
-                generatedPassword += generateRandomChars(paddingLength, hasLower, hasUpper, hasNumbers, hasSymbols);
-            }
-        } else {
-            generatedPassword = generateRandomChars(length, hasLower, hasUpper, hasNumbers, hasSymbols);
-        }
-
-        document.getElementById('result').value = generatedPassword;
-    }
-
-    function generateRandomChars(length, lower, upper, number, symbol) {
-        let chars = '';
-        const typesCount = lower + upper + number + symbol;
-        const typesArr = [{lower}, {upper}, {number}, {symbol}].filter(item => Object.values(item)[0]);
-
-        if (typesCount === 0) return ''; 
-
-        for (let i = 0; i < length; i++) {
-            const typeName = Object.keys(typesArr[Math.floor(Math.random() * typesArr.length)])[0];
-            chars += randomFunc[typeName]();
-        }
-        return chars;
-    }
-
-    function transformToLeet(word, useUpper, useNumbers, useSymbols) {
-        const leetMap = {
-            'a': [], 'e': [], 'i': [], 'o': [], 's': [], 't': [], 'l': [], 'b': [], 'g': []
-        };
-
-        if (useNumbers) {
-            leetMap['a'].push('4'); leetMap['e'].push('3'); leetMap['i'].push('1');
-            leetMap['o'].push('0'); leetMap['s'].push('5'); leetMap['t'].push('7');
-            leetMap['l'].push('1'); leetMap['b'].push('8'); leetMap['g'].push('9');
-        }
-        
-        // Se dejaron únicamente los símbolos básicos y seguros
-        if (useSymbols) {
-            leetMap['a'].push('@'); leetMap['i'].push('!'); leetMap['s'].push('$');
-        }
-
-        let result = '';
-        for (let i = 0; i < word.length; i++) {
-            let char = word[i].toLowerCase();
-            
-            if (leetMap[char] && leetMap[char].length > 0) {
-                if (Math.random() > 0.3) {
-                    const options = leetMap[char];
-                    result += options[Math.floor(Math.random() * options.length)];
-                } else {
-                    result += (useUpper && Math.random() > 0.5) ? char.toUpperCase() : char;
-                }
-            } else {
-                result += (useUpper && Math.random() > 0.5) ? char.toUpperCase() : char;
-            }
-        }
-        return result;
-    }
-
-    function MathRandomRange(min, max) {
-        return Math.floor(Math.random() * (max - min + 1)) + min;
-    }
-
-    function getRandomLower() { return String.fromCharCode(MathRandomRange(97, 122)); }
-    function getRandomUpper() { return String.fromCharCode(MathRandomRange(65, 90)); }
-    function getRandomNumber() { return String.fromCharCode(MathRandomRange(48, 57)); }
-    
-    // Lista de símbolos reducida y segura
-    function getRandomSymbol() { 
-        const symbols = '!@#$%';
-        return symbols[Math.floor(Math.random() * symbols.length)];
-    }
-
-    function copyToClipboard() {
-        const resultEl = document.getElementById('result');
-        if (!resultEl.value) return;
-        
-        navigator.clipboard.writeText(resultEl.value).then(() => {
-            const btn = document.getElementById('copy-btn');
-            const originalText = btn.innerText;
-            btn.innerText = '¡Listo!';
-            btn.style.backgroundColor = 'var(--success)';
-            setTimeout(() => {
-                btn.innerText = originalText;
-                btn.style.backgroundColor = 'var(--primary)';
-            }, 1500);
-        });
-    }
-
-    window.onload = generatePassword;
-</script>
-
+            <button id="generate-btn" class="main-button">Generar nueva clave</button>
+        </section>
+    </main>
+    <script src="script.js"></script>
 </body>
+
 </html>
